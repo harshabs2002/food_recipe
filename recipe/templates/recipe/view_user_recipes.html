@@ -1,0 +1,57 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% load static %}
+{% block content %}
+    <div class="max-w-screen-xl mx-auto p-6">
+        <h1 class="mb-6 text-3xl font-medium">My recipes</h1>
+        <div class="flex flex-wrap">
+            {% for recipe in recipes %}
+                <div class="bg-white border border-gray-200 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 m-2">
+                    <a href="{% url 'recipe:view_recipe_detail' recipe_primary_key=recipe.pk %}">
+                        <img class="rounded-t-lg w-full h-48 object-cover" src="{{ recipe.image.url }}" alt="{{ recipe.name }}" />
+                    </a>
+                    <div class="p-5">
+                        <a href="{% url 'recipe:view_recipe_detail' recipe_primary_key=recipe.pk %}">
+                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ recipe.name }}</h5>
+                        </a>
+                        <p class="mb-3 text-sm text-gray-500">Cook time: {{ recipe.cook_time }} minutes</p>
+                        <p class="mb-3 text-sm text-gray-500">Serving: {{ recipe.serving }}</p>
+                        <p class="mb-3 text-gray-700">{{ recipe.description }}</p>
+                        <div class="flex justify-between">
+                            <a href="{% url 'recipe:view_recipe_detail' recipe_primary_key=recipe.pk %}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 transition-colors duration-300">
+                                Read more
+                                <svg class="w-3.5 h-3.5 ml-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                                </svg>
+                            </a>
+                            <form method="post" action="{% url 'recipe:delete_recipe' recipe_primary_key=recipe.pk %}" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 transition-colors duration-300">
+                                    Delete
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'recipe:update_recipe' recipe.pk %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                {% if form.errors %}
+                                    <div class="error">
+                                        <ul>
+                                            {% for field in form %}
+                                                {% for error in field.errors %}
+                                                    <li>{{ error }}</li>
+                                                {% endfor %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                                <button type="submit" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 transition-colors duration-300">
+                                    Update
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
